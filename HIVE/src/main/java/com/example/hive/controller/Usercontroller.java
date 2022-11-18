@@ -1,8 +1,6 @@
 package com.example.hive.controller;
-
+import com.example.hive.dao.UserDAO;
 import com.example.hive.pojo.User;
-import com.example.hive.result.Result;
-import com.example.hive.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,21 +9,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.List;
+
 @Controller
 public class Usercontroller {
     @Autowired
-    UserService userService;
+    UserDAO userDAO;
+    //进行模糊查询，找到对应的用户
     @CrossOrigin
-    @PostMapping(value = "/api/test")
+    @PostMapping(value = "/api/finduser")
     @ResponseBody
-    public Result test(@RequestBody User requestUser) {
-        String username = requestUser.getName();
+    public List<User> test(@RequestBody User requestUser) {
+        String username = requestUser.getUserid();
         username = HtmlUtils.htmlEscape(username);
-        User user = userService.getByName(username);
-        if (null == user) {
-            return new Result(400);
-        } else {
-            return new Result(200);
-        }
+        List<User> users = userDAO.findByUseridLike("%"+username+"%");
+        return users;
     }
 }
