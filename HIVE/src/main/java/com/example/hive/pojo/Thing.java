@@ -14,7 +14,7 @@ public class Thing {
     Integer id;
     String ASIN;
     String title;
-    String group;
+    String groupp;
     Integer salesrank;
     Integer categories;
     Integer reviews;
@@ -45,12 +45,12 @@ public class Thing {
         this.title = title;
     }
 
-    public String getGroup() {
-        return group;
+    public String getGroupp() {
+        return groupp;
     }
 
-    public void setGroup(String group) {
-        this.group = group;
+    public void setGroupp(String groupp) {
+        this.groupp = groupp;
     }
 
     public Integer getSalesrank() {

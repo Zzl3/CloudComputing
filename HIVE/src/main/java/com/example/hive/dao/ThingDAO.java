@@ -9,4 +9,5 @@ public interface ThingDAO extends JpaRepository<Thing,Integer> {
     List<Thing> findAll(); //查询全部
     List<Thing> findByTitleLike(String title); //查询title模糊查询
     Optional<Thing> findById(Integer id); //通过id查询
+
 }

@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ReviewDAO extends JpaRepository<Review,Integer> {
     List<Review> findAll(); //查询全部
+    List<Review> findByThingid(Integer thingid); //查询物品id得到的列表
     List<Review> findByUseridLike(String userid);//模糊查询userid
+    List<Review> findByUserid(String userid);//查询userid
     List<Review> findByYearBetween(Integer a,Integer b);//模糊查询在a到b之间的评论
 }

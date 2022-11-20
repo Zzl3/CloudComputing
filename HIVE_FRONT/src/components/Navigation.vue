@@ -1,13 +1,12 @@
 <template>
   <div>
     <el-menu
-      :default-active="activeIndex2"
       mode="horizontal"
-      @select="handleSelect"
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b"
     >
+    <el-menu-item index="0" @click="goindex">总体概述</el-menu-item>
       <el-menu-item index="1" @click="gouser">用户方面</el-menu-item>
       <el-menu-item index="2" @click="gothing">商品方面</el-menu-item>
     </el-menu>
@@ -20,6 +19,11 @@ export default {
     return {};
   },
   methods: {
+    goindex() {
+      this.$router.push({
+        path: "/index",
+      });
+    },
     gouser() {
       this.$router.push({
         path: "/user",

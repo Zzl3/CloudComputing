@@ -9,7 +9,8 @@
         class="inputclass"
       >
       </el-input>
-      <el-button style="display: inline">确认查找</el-button>
+      <el-button style="display: inline" @click.native="findname">确认查找</el-button>
+      <el-button style="display: inline" @click.native="findall">复原全部</el-button>
     </div>
 
     <el-table
@@ -45,23 +46,23 @@
             :type="
               scope.row.group == 'VideoGame'
                 ? ''
-                : scope.row.auditstatus == 'BabyProduct'
+                : scope.row.group == 'BabyProduct'
                 ? 'success'
-                : scope.row.auditstatus == 'Toy'
+                : scope.row.group == 'Toy'
                 ? 'danger'
-                : scope.row.auditstatus == 'CE'
+                : scope.row.group == 'CE'
                 ? 'warning'
-                : scope.row.auditstatus == 'DVD'
+                : scope.row.group == 'DVD'
                 ? 'info'
-                : scope.row.auditstatus == 'Sports'
+                : scope.row.group == 'Sports'
                 ? 'primary'
-                : scope.row.auditstatus == 'Video'
+                : scope.row.group == 'Video'
                 ? ''
-                : scope.row.auditstatus == 'Music'
+                : scope.row.group == 'Music'
                 ? 'primary'
-                : scope.row.auditstatus == 'Book'
+                : scope.row.group == 'Book'
                 ? 'info'
-                : scope.row.auditstatus == 'Software'
+                : scope.row.group == 'Software'
                 ? 'warning'
                 : 'danger'
             "
@@ -81,12 +82,24 @@
       </el-table-column>
       <el-table-column label="查看详情" width="100px">
         <template slot-scope="scope">
-          <el-button type="info" size="mini" @click="handleEdit(scope.$index, scope.row)"
+          <el-button type="info" size="mini" @click="viewdetail(scope.$index, scope.row)"
             >查看详情</el-button
           >
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="评论详情" :visible.sync="dialogTableVisible" width="78%">
+      <el-table :data="gridData">
+        <el-table-column property="id" label="id" width="150"></el-table-column>
+        <el-table-column property="userid" label="userid" width="200"></el-table-column>
+        <el-table-column property="votes" label="votes" width="100"></el-table-column>
+        <el-table-column property="rating" label="rating" width="100"></el-table-column>
+        <el-table-column property="helpful" label="helpful" width="100"></el-table-column>
+        <el-table-column property="year" label="year" width="100"></el-table-column>
+        <el-table-column property="month" label="month" width="100"></el-table-column>
+        <el-table-column property="day" label="day" width="100"></el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -96,6 +109,7 @@ export default {
   components: { Navigation },
   data() {
     return {
+      input: "",
       tableData: [
         {
           id: "1",
@@ -109,27 +123,85 @@ export default {
           avgrating: "5",
         },
       ],
+      gridData: [
+        {
+          id: "0",
+          userid: "A2JW67OY8U6HHK",
+          votes: "10",
+          rating: "5",
+          helpful: "9",
+          year: "2000",
+          month: "7",
+          day: "28",
+        },
+      ],
+      dialogTableVisible: false,
     };
   },
-  mounted() {
+  created() {
     this.getdata();
   },
   methods: {
     filterTag(value, row) {
       return row.group === value;
     },
-      getdata() {
-        var _this = this;
-      this.$axios
-        .post("/finduser", {
-          name: _this.input,
-        })
-        .then((successResponse) => {
-          if (successResponse.data.code === 200) {
-            alert("成功！");
-          }
-        })
-        .catch((failResponse) => {});
+    getdata() {
+      let vm = this;
+      this.$axios.post("/findallthing").then((res) => {
+        for (let item of res.data) {
+          vm.tableData.push(item);
+        }
+      });
+    },
+
+    findname() {
+      let vm = this;
+      vm.tableData = undefined;
+      vm.tableData = new Array(); //先清空再进行筛选
+      this.$axios({
+        url: "/findbytitle",
+        method: "post",
+        data: vm.input,
+        headers: {
+          "Content-Type": "text/plain",
+        },
+      }).then((res) => {
+        for (let item of res.data) {
+          vm.tableData.push(item);
+        }
+      });
+    },
+
+    findall() {
+      let vm = this;
+      vm.tableData = undefined;
+      vm.tableData = new Array(); //先清空再进行筛选
+      this.$axios.post("/findallthing").then((res) => {
+        for (let item of res.data) {
+          vm.tableData.push(item);
+        }
+      });
+    },
+
+    viewdetail(index, row) {
+      let vm = this;
+      vm.gridData = undefined;
+      vm.gridData = new Array(); //先清空再进行筛选
+      this.dialogTableVisible = true;
+
+      this.$axios({
+        url: "/findbythingid",
+        method: "post",
+        data: row.id,
+        headers: {
+          "Content-Type": "text/plain",
+        },
+      }).then((res) => {
+        for (let item of res.data) {
+          vm.gridData.push(item);
+        }
+      });
+      //console.log(row.id);
     },
   },
 };
